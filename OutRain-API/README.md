@@ -1,96 +1,75 @@
-# OutRain Exercise
-Please read the following instructions before starting to implement your exercise, you don't want to miss any important instruction.
+# Drive Status and Weather API Service
 
-### Creating your repository 
+This project provides two main services: 
+1. **Drive Status API** - Fetches the status of drives including details such as name, size, free space, and other metadata. 
+2. **Weather API** - Fetches weather information for a specified location .
 
-Please mirror this git repo using the instructions [here](https://help.github.com/articles/duplicating-a-repository). Then clone it locally. 
-(**Please DO NOT fork the repo**)
+Both services are containerized using Docker for easy deployment.
 
-### Submitting your solution
-You may use one of the following coding languages: Python/Ruby.
+## Features
 
-The exercise should be delivered as a GitHub repository in your private account, containing:
-1. Directory with all the modules of your service (providing a clear directory tree is an advantage).
-2. Dockerfile that runs the web framwork and copies the code to the container.
-3. Basic instructions on how to use the Dockerfile and examples for querying the service.
+- **Drive Status API**:
+  - Fetch drive status filtered by `online` or `offline`.
+  - Outputs drive details including size, free space, log size, path, etc.
+  
+- **Weather API**:
+  - Fetch weather details for a given location.
 
-Requirments:
-1. The service should be started by the Dockerfile and should print all logs/output to the container's shell.
+- **Containerized with Docker** for easy deployment.
 
-Nice to have:
-1. Pay attention to your code structure and organization in classes, functions and modules. Naming convention will also be taken into consideration.
-2. We will be looking at you commit history. A tidy commit history is an advantage.
+## Requirements
 
+- Python 3.9 or later
+- Docker (optional, for containerized setup)
+- Flask and other dependencies defined in `requirements.txt`
 
-### Exercise
-Write a small API service that will expose the following routes:
+## Setup Instructions
 
-~~~
-GET  /v1/api/checkCurrentWeather
-GET  /v1/api/checkCityWeather?city=<city_name>
-POST /v1/api/driveStatus
-GET  /v1/api/driveStatus?status=<drive_status>
-~~~
+### 1. Clone the Repository
 
-#### checkCurrentWeather
-This endpoint will check your location according to your IP, then check the current weather at your location and return the result in following format:
-`{"city": <city>, "country": <country>, "degrees": <degrees>}`
+Clone the repository to your local machine:
 
-* Degrees should be shown in Celsius.
-* You can get the location according to the IP via this service: http://ipinfo.io/ 
-* You can fetch the weather information for a given location via this service: https://openweathermap.org/current. We will provide you with an API key.
-
-##### Response example
-
-~~~
-{"city": "Tel-Aviv", "country": "IL", "degrees": 30}
-~~~
-
-#### checkCityWeather
-This endpoint will check the current weather at a specific location passed as a query parameter, and will return the result in the following format:
-`{"city": <city>, "country": <country>, "degrees": <degrees>}`
-
-* Degrees should be shown in Celsius.
-* You can fetch the weather information for a given location via this service: https://openweathermap.org/current. We will provide you with an API key.
-
-##### Response example
-
-~~~
-{"city": "Haifa", "country": "IL", "degrees": 26}
-~~~
-
-#### driveStatus
-This endpoint has two available HTTP methods, one for updating the data on the service and one for quering it.
-
-The **POST** endpoint will receive as body the data defined in [input.json](https://github.com/outbrain/core-interview-exercise/blob/master/OutRain-API/input.json), and will save it to a local non-consistent file inside the container(when deleting and re-running the container, the file should not be there).
-The file should be overwritten with each call (no need to append).
-
-The response should be in the following format: `{"message": "success|failure"}`
-
-* Bonus: you can add the exception you get in case of a failure to the message. 
-
-The **GET** endpoint will receive as query parameter the status to filter the data by and will parse the data in the local file to return only the drives in the provided status.
-
-##### Response example
-
-```
-{
-  "message": "Found 1 offline drives",
-  "data": [
-    {
-      "name": "SP4",
-      "size": "4764771 MB",
-      "free": "2333948 MB",
-      "path": "/dev/sdk",
-      "log": "0 MB",
-      "port": 5660,
-      "guid": "db53cc9f02524622005b30b0eb0947e3",
-      "clusterUuid": "-8650609094877646407--116798096584060989",
-      "disks": ["/dev/sdk", "/dev/sdl", "/dev/sdm"],
-      "dare": 0
-    }
-  ]
+```bash
+git clone https://github.com/yourusername/drive-status-weather-api.git
+cd drive-status-weather-api
 ```
 
-* In cases where the value of the `status` query param is not found in the body, return a proper message and an empty data list.
-* In the input file, each key is a drive and each value is a string representing the drive's information.
+In app/weather_service.py file add to API_KEY var KEY
+
+### 2. Build the Docker container:
+
+```
+sudo docker build -t weather-drive-api .
+```
+
+### 3. Run the Docker container:
+
+```
+sudo docker run -it -p 5000:5000 weather-drive-api
+```
+
+## Example Requests
+
+### Check Current Weather:
+
+```
+curl -X GET http://localhost:5000/v1/api/checkCurrentWeather
+```
+
+### Check Weather for City:
+
+```
+curl -X GET "http://localhost:5000/v1/api/checkCityWeather?city=Tel-Aviv"
+```
+
+### Post Drive Status:
+
+```
+curl -X POST -H "Content-Type: application/json" -d @input.json http://localhost:5000/v1/api/driveStatus
+```
+
+### Get Drive Status by Filter:
+
+```
+curl -X GET "http://localhost:5000/v1/api/driveStatus?status=offline"
+```
