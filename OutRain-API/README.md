@@ -30,11 +30,12 @@ Both services are containerized using Docker for easy deployment.
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/drive-status-weather-api.git
+git clone https://github.com/eliatiya/OutRain-API.git
 cd drive-status-weather-api
 ```
 
-In app/weather_service.py file add to API_KEY var KEY
+**In the app/weather_service.py file, set your API_KEY variable with your own API key for the weather service.**
+
 
 ### 2. Build the Docker container:
 
