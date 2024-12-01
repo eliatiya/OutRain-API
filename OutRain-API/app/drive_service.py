@@ -32,4 +32,3 @@ def get_drive_data(status):
 
     return {"message": f"Found {len(filtered_drives)} {status} drives", "data": filtered_drives}
 
-get_drive_data("Online")
